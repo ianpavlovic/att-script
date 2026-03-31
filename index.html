@@ -1,1 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AT&T Fixed Wireless — V6</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#F7F7F8;--white:#FFF;--border:#E8E8ED;--border-hover:#D1D1D6;
+  --text:#1D1D1F;--text2:#6E6E73;--text3:#AEAEB2;
+  --blue:#0071E3;--blue-bg:#EBF5FF;--blue-dark:#004AAD;
+  --green:#34C759;--green-bg:#EDFCF0;--green-dark:#1B7A2B;
+  --orange:#FF9500;--orange-bg:#FFF8EE;
+  --purple:#AF52DE;--purple-bg:#F5EEFB;
+  --red:#FF3B30;
+  --sidebar:#FAFAFA;
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;font-size:13.5px;-webkit-font-smoothing:antialiased;}
 
+/* ── LAYOUT ── */
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:220px;min-width:220px;background:var(--sidebar);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:20px 0;overflow-y:auto;
+}
+.sidebar-brand{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.sidebar-brand h1{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
+.sidebar-brand p{font-size:11px;color:var(--text3);margin-top:2px;}
+
+.sidebar-section{padding:0 12px;margin-bottom:16px;}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin-bottom:6px;}
+
+.nav-btn{
+  display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;
+  border:none;background:transparent;border-radius:var(--radius-sm);
+  cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--text2);
+  text-align:left;transition:all .15s;
+}
+.nav-btn:hover{background:var(--border);color:var(--text);}
+.nav-btn.active{background:var(--blue-bg);color:var(--blue);font-weight:600;}
+.nav-btn .num{
+  width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;background:var(--border);color:var(--text2);flex-shrink:0;
+}
+.nav-btn.active .num{background:var(--blue);color:var(--white);}
+.nav-btn.form-btn .num{background:var(--orange);color:var(--white);}
+.nav-btn.form-btn.active .num{background:var(--orange);}
+.nav-btn.form-btn.active{background:var(--orange-bg);color:#B35C00;}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;overflow-y:auto;padding:32px 40px 60px;background:var(--bg);}
+.page{display:none;max-width:640px;}
+.page.active{display:block;}
+
+.page-title{font-size:22px;font-weight:700;letter-spacing:-.5px;color:var(--text);margin-bottom:4px;}
+.page-subtitle{font-size:13px;color:var(--text3);margin-bottom:24px;}
+
+/* ── SCRIPT BLOCKS ── */
+.script-block{
+  padding:14px 16px;margin-bottom:10px;border-radius:var(--radius);
+  border:1px solid var(--border);background:var(--white);
+  position:relative;
+}
+.script-block .label{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:.6px;
+  padding:2px 8px;border-radius:4px;margin-bottom:8px;
+}
+.script-block.say .label{background:var(--green-bg);color:var(--green-dark);}
+.script-block.ask .label{background:var(--blue-bg);color:var(--blue);}
+.script-block.trans .label{background:var(--purple-bg);color:var(--purple);}
+.script-block p{font-size:14px;color:var(--text);line-height:1.65;}
+
+.note{
+  padding:10px 14px;margin-bottom:10px;border-radius:var(--radius-sm);
+  background:var(--orange-bg);border-left:3px solid var(--orange);
+  font-size:12.5px;color:#8B5E00;line-height:1.5;
+}
+
+.check-list{padding:6px 0 6px 4px;margin-bottom:10px;}
+.check-item{display:flex;gap:8px;padding:5px 0;font-size:13.5px;color:var(--text);}
+.check-item span{color:var(--green);font-weight:600;}
+
+/* ── NOTES & TIPS ── */
+.note{
+  padding:12px 14px;margin-bottom:10px;border-radius:var(--radius-sm);
+  background:var(--orange-bg);border-left:3px solid var(--orange);
+  font-size:13px;color:#8B5E00;line-height:1.55;font-style:italic;
+}
+.tip{
+  padding:12px 14px;margin-bottom:10px;border-radius:var(--radius-sm);
+  background:var(--blue-bg);border-left:3px solid var(--blue);
+  font-size:13px;color:var(--blue-dark);line-height:1.55;
+}
+.tip strong{font-size:11px;letter-spacing:.5px;display:block;margin-bottom:4px;color:var(--blue);}
+
+/* ── FORM FIELDS ── */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;}
+.field label .req{color:var(--red);margin-left:1px;}
+.field label .hint{font-weight:400;color:var(--text3);font-size:11px;}
+.field input,.field textarea,.field select{
+  width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  font-family:inherit;font-size:13.5px;color:var(--text);background:var(--white);
+  transition:border .15s,box-shadow .15s;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,113,227,.1);
+}
+.field textarea{resize:vertical;min-height:48px;}
+.field-row{display:flex;gap:10px;}
+.field-row .field{flex:1;}
+
+.pills{display:flex;gap:6px;flex-wrap:wrap;}
+.pill{flex:1;min-width:80px;}
+.pill input{display:none;}
+.pill label{
+  display:block;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  text-align:center;cursor:pointer;font-size:12.5px;font-weight:500;color:var(--text2);transition:all .15s;
+}
+.pill input:checked+label{border-color:var(--blue);background:var(--blue-bg);color:var(--blue);font-weight:600;}
+.pill label:hover{border-color:var(--border-hover);}
+
+.conditional{display:none;margin-top:8px;}
+.conditional.show{display:block;}
+
+/* ── LIVE DATA ── */
+.live{color:var(--blue);font-weight:600;border-bottom:2px solid var(--blue);padding-bottom:1px;transition:all .3s;}
+.live.filled{color:var(--green-dark);border-color:var(--green);}
+
+/* ── SUBMIT ── */
+.billing-bar{
+  padding:10px 14px;border-radius:var(--radius-sm);
+  background:var(--orange-bg);border-left:3px solid var(--orange);
+  font-size:12px;color:#8B5E00;margin-bottom:16px;font-weight:500;
+}
+.btn-submit{
+  width:100%;padding:13px;border:none;border-radius:var(--radius);
+  background:var(--blue);color:var(--white);font-family:inherit;
+  font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;
+}
+.btn-submit:hover{background:var(--blue-dark);}
+.btn-submit:disabled{background:var(--text3);cursor:wait;}
+.btn-clear{background:none;border:none;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer;margin-top:10px;padding:4px;}
+.btn-clear:hover{color:var(--red);}
+
+.success{display:none;text-align:center;padding:60px 20px;}
+.success.show{display:block;}
+.success .icon{font-size:44px;margin-bottom:12px;}
+.success h2{font-size:20px;font-weight:700;color:var(--green-dark);}
+.success p{color:var(--text2);font-size:13px;margin-top:4px;}
+.success .name{font-weight:600;color:var(--text);margin-top:6px;}
+.success .btn-new{margin-top:20px;background:var(--green-dark);color:var(--white);border:none;padding:10px 28px;font-family:inherit;font-size:13px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;}
+
+.error-banner{display:none;background:#FFF0F0;border:1px solid #FFD4D4;color:var(--red);padding:8px 14px;border-radius:var(--radius-sm);margin-bottom:12px;font-size:12px;font-weight:500;}
+.error-banner.show{display:block;}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .mobile-nav{display:flex !important;}
+  .main{padding:16px 16px 60px;}
+  .field-row{flex-direction:column;}
+}
+.mobile-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--white);border-top:1px solid var(--border);
+  padding:6px 8px;gap:2px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.mobile-nav button{
+  flex-shrink:0;padding:6px 12px;border:none;border-radius:20px;
+  font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;
+  background:var(--bg);color:var(--text2);white-space:nowrap;
+}
+.mobile-nav button.active{background:var(--blue);color:var(--white);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <h1>AT&T Fixed Wireless</h1>
+      <p>V6 Script + Form</p>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Script</div>
+      <button class="nav-btn active" onclick="go('p1',this)"><div class="num">1</div>Opening</button>
+      <button class="nav-btn" onclick="go('p2',this)"><div class="num">2</div>Hook</button>
+      <button class="nav-btn" onclick="go('p3',this)"><div class="num">3</div>Value Prop</button>
+      <button class="nav-btn" onclick="go('p4',this)"><div class="num">4</div>Pricing</button>
+      <button class="nav-btn" onclick="go('p5',this)"><div class="num">5</div>Trial Close</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Collect & Close</div>
+      <button class="nav-btn form-btn" onclick="go('p6',this)"><div class="num">6</div>Data Collection</button>
+      <button class="nav-btn" onclick="go('p7',this)"><div class="num">7</div>Compliance</button>
+      <button class="nav-btn" onclick="go('p8',this)"><div class="num">8</div>Next Steps</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Submit</div>
+      <button class="nav-btn form-btn" onclick="go('submit',this)"><div class="num">✓</div>Review & Submit</button>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="padding:12px 20px;font-size:10px;color:var(--text3);">IPTECH SV</div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main" id="mainArea">
+    <div class="error-banner" id="errorBanner">Please fill in all required fields marked with *</div>
+
+    <form id="mainForm" autocomplete="off">
+
+      <!-- P1 -->
+      <div class="page active" id="p1">
+        <div class="page-title">Opening & Gatekeeper</div>
+        <div class="page-subtitle">Phase 1 · First 15 seconds</div>
+        <div class="note">⚠ Your goal in the first 15 seconds is to sound confident, identify the decision-maker, and earn permission to continue. Do NOT pitch the product yet.</div>
+        <div class="script-block say"><div class="label">SAY</div><p>Hello, my name is _______, an AT&T Solutions Provider calling on a recorded line. I'm trying to reach the person who handles internet services for the business — would that be you, or could you point me to the right person?</p></div>
+        <div class="tip"><strong>💡 GATEKEEPER STRATEGY</strong>If they say the DM is unavailable: "No problem — I'm reaching out because AT&T has pre-qualified your business location for a new 5G internet backup service. Could I get the best time and direct number to reach [DM name]?"</div>
+        <div class="note">⚠ If you reach the DM directly, confirm their role: "Are you the person who manages internet and connectivity decisions for the business?" Wait for YES before proceeding.</div>
+      </div>
+
+      <!-- P2 -->
+      <div class="page" id="p2">
+        <div class="page-title">Hook & Engagement</div>
+        <div class="page-subtitle">Phase 2 · Earn their attention in ~20 seconds</div>
+        <div class="note">⚠ This is the most critical moment. You have ~20 seconds to earn their attention. Lead with a problem they recognize, not a product name.</div>
+        <div class="script-block say"><div class="label">SAY</div><p>Great — the reason for my call is that your business at <span class="live" id="live_address">[ADDRESS]</span> has been pre-qualified for AT&T's Fixed Wireless Internet service.</p></div>
+        <div class="script-block ask"><div class="label">ASK</div><p>Quick question — has your business ever experienced an internet outage that disrupted operations or cost you revenue?</p></div>
+        <div class="note">⚠ If they say NO or seem dismissive: "That's great to hear. Most businesses don't think about it until it happens — and the average cost of just one hour of downtime for a small business is over $10,000. This service is designed to make sure that never becomes your reality."</div>
+      </div>
+
+      <!-- P3 -->
+      <div class="page" id="p3">
+        <div class="page-title">Value Proposition</div>
+        <div class="page-subtitle">Phase 3 · Conversational, not scripted</div>
+        <div class="note">⚠ Deliver this section conversationally, not as a script read. Hit the key points but adapt to the prospect's responses.</div>
+        <div class="script-block say"><div class="label">SAY</div><p>Even if you have fiber, cable, or a shared connection today, outages happen — and when they do, everything goes down: point-of-sale, phones, email, customer-facing tools.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>AT&T Fixed Wireless Internet gives your business a dedicated 5G wireless backup with average speeds of 300–474 Mbps. It works independently — if one goes down, the other keeps you running.</p></div>
+        <div class="script-block trans"><div class="label">TRANSITION</div><p>And here's the part that makes this a no-brainer — let me walk you through the pricing.</p></div>
+      </div>
+
+      <!-- P4 -->
+      <div class="page" id="p4">
+        <div class="page-title">Pricing & Offer</div>
+        <div class="page-subtitle">Phase 4 · Stack value, then reveal discounts</div>
+        <div class="note">⚠ Stack the value. Present the full price first, then reveal discounts one at a time to create a "price drop" effect.</div>
+        <div class="script-block say"><div class="label">SAY</div><p>AT&T Fixed Wireless Premium normally runs $105/month and includes 250GB of priority data for your critical business applications.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>But right now, AT&T has reduced the price to as low as $30/month with paperless billing, autopay, and existing AT&T wireless service.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>The 5G router — normally $275 — is just $1 on a 3-year term. And shipping is waived.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>So for roughly $4 a day, your business gets a fully independent backup internet connection backed by AT&T's 5G network and the AT&T Business Guarantee.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>You will receive a dedicated bill for AT&T Fixed Wireless Internet, billed separately from any other AT&T services.</p></div>
+        <div class="tip"><strong>💡 OBJECTION — "That sounds expensive"</strong>Reframe: "I understand — let me put it this way. One hour of downtime can cost a business thousands in lost revenue and productivity. This service costs roughly $4 a day. It's not an expense — it's insurance for your business operations."</div>
+      </div>
+
+      <!-- P5 -->
+      <div class="page" id="p5">
+        <div class="page-title">Trial Close</div>
+        <div class="page-subtitle">Phase 5 · Move to action</div>
+        <div class="script-block ask"><div class="label">ASK</div><p>Based on what I've shared, does it make sense to get this set up as a backup for your business?</p></div>
+        <div class="note">⚠ Wait for a response. If YES → proceed to Phase 6. If HESITANT → handle objection. If NO → ask what their concern is and address it.</div>
+        <div class="tip"><strong>💡 OBJECTION — "I need to think about it"</strong>"Absolutely, I respect that. Just so you know, the $1 router promotion and waived shipping are current limited-time offers. What specific concern would you want to think through? Maybe I can help clarify right now."</div>
+        <div class="tip"><strong>💡 OBJECTION — "We already have a backup"</strong>"That's smart — what are you using currently? [Listen] One advantage of AT&T Fixed Wireless is that it runs on a completely separate 5G network, so it's not dependent on the same infrastructure as your primary or existing backup."</div>
+      </div>
+
+      <!-- P6 — FORM -->
+      <div class="page" id="p6">
+        <div class="page-title">Data Collection</div>
+        <div class="page-subtitle">Phase 6 · Confirm details to send the agreement</div>
+        <div class="script-block trans"><div class="label">TRANSITION</div><p>Perfect. To get the AT&T agreement sent over today, I just need to confirm a few quick details.</p></div>
+
+        <div class="field"><label>1. Service address <span class="req">*</span></label><input type="text" name="service_address" required placeholder="Street, City, ST ZIP"></div>
+        <div class="field-row">
+          <div class="field"><label>2. First Name <span class="req">*</span></label><input type="text" name="first_name" required placeholder="First name"></div>
+          <div class="field"><label>Last Name <span class="req">*</span></label><input type="text" name="last_name" required placeholder="Last name"></div>
+        </div>
+        <div class="field"><label>3. Legal Business Name <span class="req">*</span></label><input type="text" name="legal_business_name" required placeholder="Must match official records"></div>
+        <div class="field-row">
+          <div class="field"><label>4. Main business phone <span class="req">*</span></label><input type="tel" name="main_phone" required placeholder="(555) 555-5555"></div>
+          <div class="field"><label>5. Best direct number <span class="req">*</span></label><input type="tel" name="best_phone" required placeholder="(555) 555-5555"></div>
+        </div>
+        <div class="field"><label>6. AT&T wireless phone <span class="hint">(for discount — blank if none)</span></label><input type="tel" name="att_wireless_phone" placeholder="Leave blank if none"></div>
+        <div class="field"><label>7. Billing address <span class="hint">(if different from service)</span></label><input type="text" name="billing_address" placeholder="Same as service if blank"></div>
+        <div class="field"><label>8. Email for AT&T agreement <span class="req">*</span></label><input type="email" name="dm_email" required placeholder="email@business.com"></div>
+        <div class="field">
+          <label>9. Shipping</label>
+          <div class="field-row" style="margin-bottom:8px;">
+            <div style="flex:1;"><div class="pills"><div class="pill"><input type="radio" name="shipping_carrier" id="cf" value="FEDEX" required><label for="cf">FedEx</label></div><div class="pill"><input type="radio" name="shipping_carrier" id="cu" value="UPS"><label for="cu">UPS</label></div></div></div>
+            <div style="flex:1;"><div class="pills"><div class="pill"><input type="radio" name="ship_to_service" id="sy" value="Yes" required><label for="sy">To service addr</label></div><div class="pill"><input type="radio" name="ship_to_service" id="sn" value="No"><label for="sn">Different addr</label></div></div></div>
+          </div>
+          <div class="conditional" id="altShip"><input type="text" name="alt_shipping_address" placeholder="Alternate shipping address" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px;"></div>
+        </div>
+        <div class="field"><label>10. Business Tax ID <span class="req">*</span></label><input type="text" name="tax_id" required placeholder="Tax ID or 'Pending'"></div>
+        <div class="tip"><strong>💡 TAX ID OBJECTION HANDLER</strong>If they hesitate: "I completely understand the sensitivity. AT&T requires this solely to verify existing wireless accounts and to process the new service agreement. It's a standard business verification step — similar to what you'd provide for any new business utility."</div>
+      </div>
+
+      <!-- P7 -->
+      <div class="page" id="p7">
+        <div class="page-title">Compliance & Close</div>
+        <div class="page-subtitle">Phase 7 · Required disclosure — read clearly</div>
+        <div class="note">⚠ This section is required for regulatory compliance. Read it clearly and at a moderate pace. Do not rush through it.</div>
+        <div class="script-block say"><div class="label">SAY</div><p>I appreciate your time — we're almost done. AT&T must disclose certain information and obtain your consent.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>The AT&T Wireless Agreement is being emailed to <span class="live" id="live_email">[EMAIL ADDRESS]</span>. Upon acceptance, you agree to activate Fixed Wireless Premium at $105/month. You can retain premium with paperless billing and autopay for discounts, or switch to standard for as low as $30/month.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>Billing begins upon shipment, renews monthly. Cancel anytime. 3-year term. Dedicated bill, separate from other AT&T services.</p></div>
+        <div class="script-block say"><div class="label">SAY</div><p>The agreement covers standard AT&T wireless policy and does not contain pricing.</p></div>
+        <div class="script-block ask"><div class="label">ASK</div><p>Will you have any trouble accepting the agreement today?</p></div>
+        <div class="note">⚠ Wait for confirmation. If they have concerns, address them. Do not proceed until you have verbal consent.</div>
+      </div>
+      <div class="page" id="p8">
+        <div class="page-title">Next Steps</div>
+        <div class="page-subtitle">Phase 8 · Confirmation & wrap-up</div>
+        <div class="script-block say"><div class="label">SAY</div><p>Excellent. Here's what happens next:</p></div>
+        <div class="check-list">
+          <div class="check-item"><span>✓</span> Email from AT&T eSign: "AT&T; Contract Ready for Your eSignature."</div>
+          <div class="check-item"><span>✓</span> Follow the link to accept and confirm.</div>
+          <div class="check-item"><span>✓</span> 5G router ships pre-programmed — self-install included.</div>
+          <div class="check-item"><span>✓</span> Signature required on delivery.</div>
+        </div>
+        <div class="script-block say"><div class="label">SAY</div><p>We'll follow up to ensure you received the email. Thank you for choosing AT&T!</p></div>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="page" id="submit">
+        <div class="page-title">Review & Submit</div>
+        <div class="page-subtitle">Agent tracking + submission</div>
+
+        <div class="field-row">
+          <div class="field"><label>Use Case <span class="req">*</span></label><div class="pills"><div class="pill"><input type="radio" name="use_case" id="ub" value="A backup" required><label for="ub">Backup</label></div><div class="pill"><input type="radio" name="use_case" id="um" value="Main connection"><label for="um">Main</label></div></div><div class="conditional" id="mainNotes" style="margin-top:8px;"><input type="text" name="notes" placeholder="Notes (e.g. phone lines, main connection details)" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13.5px;"></div></div>
+          <div class="field"><label>Plan <span class="req">*</span></label><div class="pills"><div class="pill"><input type="radio" name="plan" id="pp" value="Premium" required><label for="pp">Premium</label></div><div class="pill"><input type="radio" name="plan" id="ps" value="Standard"><label for="ps">Standard</label></div></div></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>BTN/BAN <span class="req">*</span></label><input type="text" name="btn_ban" required placeholder="BTN/BAN"></div>
+          <div class="field"><label>Agent Name <span class="req">*</span></label><input type="text" name="agent_name" required placeholder="Your name"></div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div class="billing-bar"><strong>⚠</strong> AT&T Fixed Wireless is billed separately. Confirm customer is aware.</div>
+          <button type="submit" class="btn-submit" id="submitBtn">Submit to Google Sheets</button>
+          <div style="text-align:center;"><button type="button" class="btn-clear" onclick="if(confirm('Clear all fields?')){document.getElementById('mainForm').reset();document.getElementById('altShip').classList.remove('show');go('p1',document.querySelector('.nav-btn'));updateLive('live_address','','[ADDRESS]');updateLive('live_email','','[EMAIL ADDRESS]');}">Clear Form</button></div>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="success" id="successMsg">
+      <div class="icon">✅</div><h2>Submitted!</h2><p>Data sent to Google Sheets.</p>
+      <p class="name" id="subName"></p>
+      <button class="btn-new" onclick="resetForm()">Submit Another</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav">
+  <button class="active" onclick="goM('p1',this)">1</button>
+  <button onclick="goM('p2',this)">2</button>
+  <button onclick="goM('p3',this)">3</button>
+  <button onclick="goM('p4',this)">4</button>
+  <button onclick="goM('p5',this)">5</button>
+  <button onclick="goM('p6',this)" style="background:var(--orange-bg);color:#B35C00;">6 ✏️</button>
+  <button onclick="goM('p7',this)">7</button>
+  <button onclick="goM('p8',this)">8</button>
+  <button onclick="goM('submit',this)" style="background:var(--green-bg);color:var(--green-dark);">Submit</button>
+</div>
+
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycby2LjcVTNOMTc3oz3yoqj_4AUUQzcs9JpBQrYZGKbgDSicOQxKkk7CMTbmCadmdj-3jJA/exec';
+
+function go(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('mainArea').scrollTop=0;
+}
+function goM(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.mobile-nav button').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.getElementById('mainArea').scrollTop=0;
+}
+
+document.querySelectorAll('input[name="ship_to_service"]').forEach(r=>{r.addEventListener('change',function(){document.getElementById('altShip').classList.toggle('show',this.value==='No');});});
+document.querySelectorAll('input[name="use_case"]').forEach(r=>{r.addEventListener('change',function(){document.getElementById('mainNotes').classList.toggle('show',this.value==='Main connection');if(this.value!=='Main connection'){const n=document.querySelector('input[name="notes"]');if(n)n.value='';}});});
+
+document.getElementById('mainForm').addEventListener('submit',async function(e){
+  e.preventDefault();const btn=document.getElementById('submitBtn'),err=document.getElementById('errorBanner');
+  let valid=true;
+  this.querySelectorAll('[required]').forEach(f=>{if(f.type==='radio'){if(!document.querySelector(`input[name="${f.name}"]:checked`))valid=false;}else if(!f.value.trim()){valid=false;f.style.borderColor='#FFD4D4';f.addEventListener('input',()=>f.style.borderColor='',{once:true});}});
+  if(!valid){err.classList.add('show');return;}
+  err.classList.remove('show');btn.disabled=true;btn.textContent='Submitting...';
+  const fd=new FormData(this),data={};fd.forEach((v,k)=>data[k]=v);
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    this.style.display='none';
+    document.getElementById('subName').textContent=`${data.legal_business_name} — ${data.first_name} ${data.last_name}`;
+    document.getElementById('successMsg').classList.add('show');
+  }catch(e){alert('Submission failed.');}
+  btn.disabled=false;btn.textContent='Submit to Google Sheets';
+});
+
+function resetForm(){
+  const f=document.getElementById('mainForm');f.style.display='block';f.reset();
+  document.getElementById('successMsg').classList.remove('show');
+  document.getElementById('altShip').classList.remove('show');
+  updateLive('live_address','','[ADDRESS]');updateLive('live_email','','[EMAIL ADDRESS]');
+  go('p1',document.querySelector('.nav-btn'));
+}
+
+function updateLive(id,v,fb){const el=document.getElementById(id);if(!el)return;if(v&&v.trim()){el.textContent=v.trim();el.classList.add('filled');el.classList.remove('empty');}else{el.textContent=fb;el.classList.remove('filled');el.classList.add('empty');}}
+const lb={'service_address':{id:'live_address',fallback:'[ADDRESS]'},'dm_email':{id:'live_email',fallback:'[EMAIL ADDRESS]'}};
+document.querySelectorAll('input,textarea,select').forEach(f=>{const b=lb[f.name];if(b)f.addEventListener('input',function(){updateLive(b.id,this.value,b.fallback);});});
+</script>
+</body>
+</html>
